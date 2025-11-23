@@ -1,0 +1,15 @@
+{
+  "name": "front-salevent",
+  "version": "1.0.0",
+  "description": "_Esta aplicación fue realizada con el proposito de realizar reservaciones de un salón de eventos. Esta permite crear, buscar, modificar/actualizar y eliminar (CRUD) las reservaciones._",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "vue": "^3.5.24"
+  }
+}
