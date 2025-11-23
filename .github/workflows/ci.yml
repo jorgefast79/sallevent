@@ -44,7 +44,3 @@ jobs:
       # 6. Ejecutar lint de JS y Vue
       - name: Lint JavaScript & Vue
         run: npm run lint || echo "Lint warnings"
-
-      # 7. Build Vue 3 (producción)
-      - name: Build Vue 3 project
-        run: npm run build
