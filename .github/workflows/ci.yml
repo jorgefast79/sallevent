@@ -28,7 +28,7 @@ jobs:
 
       # 3. Instalar Composer dependencias si tu proyecto PHP las tiene
       # name: Install Composer dependencies
-       # run: composer install --no-progress --no-suggest --prefer-dist
+      # run: composer install --no-progress --no-suggest --prefer-dist
 
       # 4. Configurar Node.js para Vue 3
       - name: Setup Node.js
