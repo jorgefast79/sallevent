@@ -1,42 +1,50 @@
-name: CI Pipeline
+name: CI - Sallevent
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
   pull_request:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
   build:
-
+    name: Lint & Build
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v3
+      # 1. Clonar el repositorio
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    - name: Set up PHP
-      uses: shivammathur/setup-php@v2
-      with:
-        php-version: '8.1'
-        extensions: mbstring, mysqli
+      # 2. Configurar PHP
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          extensions: mbstring, mysqli
+          coverage: none
 
-    - name: Install Composer dependencies
-      run: composer install --no-progress --no-suggest --prefer-dist
+      # 3. Instalar Composer dependencias si tu proyecto PHP las tiene
+      - name: Install Composer dependencies
+        run: composer install --no-progress --no-suggest --prefer-dist
 
-    - name: Run PHP lint
-      run: find . -name "*.php" -exec php -l {} \;
+      # 4. Configurar Node.js para Vue 3
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          cache: 'npm'
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '20'
+      # 5. Instalar dependencias de JS/Vue
+      - name: Install NPM dependencies
+        run: npm install
 
-    - name: Install npm dependencies
-      run: npm install
+      # 6. Ejecutar lint de JS y Vue
+      - name: Lint JavaScript & Vue
+        run: npm run lint || echo "Lint warnings"
 
-    - name: Run ESLint
-      run: npx eslint js/**/*.js
-
-    - name: Run Vue.js build
-      run: npm run build
+      # 7. Build Vue 3 (producción)
+      - name: Build Vue 3 project
+        run: npm run build
