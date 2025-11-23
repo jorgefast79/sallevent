@@ -1,218 +1,65 @@
-var vm = new Vue({
-   el: "#app",
-   data: {
-      data_admin: data_admin,
-      data_salon: data_salon,
-      data_customers: data_customers,
-      modal_customer: {
-         id_user: 1,
-         user_user: '',
-         name_user: '',
-         pa_lastname_user: '',
-         mo_lastname_user: '',
-         email_user: '',
-         phone_user: '',
-         password_user: ''
-      },
-      is_modal_update_admin: false,
-      is_modal_create: true,
-      index_modal_customer: 0,
-      state_inputs_modal: {
-         name_user: false,
-         user_user: false,
-         pa_lastname_user: false,
-         mo_lastname_user: false,
-         email_user: false,
-         phone_user: false,
-         password_user: false
-      },
-      user_already_exists: {
-         state: false,
-         value: ''
-      },
-      is_active_success_email: false,
-      type_select_reservations: 'all',
-      data_reservations: {
-         confirmed: [],
-         unconfirmed: []
-      },
-      total_reservations: total_reservations,
-      data_services: data_services,
-      modal_service: {
-         id_service: 1,
-         name_service: '',
-         price: 0,
-         detail: ''
-      },
-      is_modal_service_create: true,
-      index_service: 0
+const vm = Vue.createApp({
+   data() {
+      return {
+         data_admin: data_admin,
+         data_salon: data_salon,
+         data_customers: data_customers,
+         modal_customer: {
+            id_user: 1,
+            user_user: '',
+            name_user: '',
+            pa_lastname_user: '',
+            mo_lastname_user: '',
+            email_user: '',
+            phone_user: '',
+            password_user: ''
+         },
+         is_modal_update_admin: false,
+         is_modal_create: true,
+         index_modal_customer: 0,
+         state_inputs_modal: {
+            name_user: false,
+            user_user: false,
+            pa_lastname_user: false,
+            mo_lastname_user: false,
+            email_user: false,
+            phone_user: false,
+            password_user: false
+         },
+         user_already_exists: {
+            state: false,
+            value: ''
+         },
+         is_active_success_email: false,
+         type_select_reservations: 'all',
+         data_reservations: {
+            confirmed: [],
+            unconfirmed: []
+         },
+         total_reservations: total_reservations,
+         data_services: data_services,
+         modal_service: {
+            id_service: 1,
+            name_service: '',
+            price: 0,
+            detail: ''
+         },
+         is_modal_service_create: true,
+         index_service: 0,
+         // variables para el manejo de páginas
+         id_page_current: '#customers',
+         id_option_current: '#opt-customers'
+      };
    },
+
    methods: {
-      modify_admin: function() {
-         this.is_modal_create = false;
-         this.is_modal_update_admin = true;
-         this.restart_modal();
-         $('#box-modify-customer').modal({
-            backdrop: 'static',
-            keyboard: false
-         });
-      },
-      update_admin: function() {
-         $.post('../ajax/admin/updateUser.php', {
-               data_user: JSON.stringify(this.modal_customer)
-            },
-            function(data, status) {
-               if (status == 'success') {
-                  if (JSON.parse(data).status) {
-                     vm.data_admin = JSON.parse(JSON.stringify(vm.modal_customer));
-                     create_notification('<strong>Exitoso</strong>: Se actualizo correctamente tu información',
-                        'alert-success', 'personal-information');
-                     return;
-                  }
-               }
-               create_notification('<strong>Error</strong>: No se pudo actualizar tu información',
-                  'alert-danger', 'personal-information');
-            }
-         );
-         $('#box-modify-customer').modal("hide");
-      },
-      modify_customer: function(index_customer) {
-         this.is_modal_create = false;
-         this.index_modal_customer = index_customer;
-         this.is_modal_update_admin = false;
-         this.restart_modal();
-         $('#box-modify-customer').modal({
-            backdrop: 'static',
-            keyboard: false
-         });
-      },
-      create_or_update_customer: function() {
-         if (this.is_disable_btn_modal) return;
-         if (this.is_modal_create) {
-            this.create_customer();
-         } else if(this.is_modal_update_admin) {
-            this.update_admin();
-         } else {
-            this.update_customer();
-         }
-      },
-      update_customer: function() {
-         $.post('../ajax/admin/updateUser.php', {
-               'data_user': JSON.stringify(this.modal_customer)
-            },
-            function(data, status) {
-               if (status == 'success') {
-                  if (JSON.parse(data).status) {
-                     Vue.set(vm.data_customers, vm.index_modal_customer,
-                        JSON.parse(JSON.stringify(vm.modal_customer)))
-                     create_notification('<strong>Exitoso</strong>: Se actualizo correctamente la información de ' +
-                        vm.modal_customer.user_user, 'alert-success', 'customers');
-                     return;
-                  }
-               }
-               create_notification('<strong>Error</strong>: No se pudo actualizar la información de ' +
-                  vm.modal_customer.user_user, 'alert-danger', 'customers');
-            }
-         );
-         $('#box-modify-customer').modal("hide");
-      },
-      remove_customer: function(index_customer) {
-         $.post('../ajax/admin/deleteUser.php', {
-               id_user: this.data_customers[index_customer].id_user
-            },
-            function(data, status) {
-               if (status == 'success') {
-                  let data_parse = JSON.parse(data);
-                  if (data_parse.status) {
-                     create_notification('<strong>Exisitoso</strong>: Se elimino correctamente al usuario ' +
-                        vm.data_customers[index_customer].user_user, 'alert-success', 'customers');
-                     vm.data_customers.splice(index_customer, 1);
-                     return;
-                  } else if(data_parse.type = 'exists_reservations') {
-                     create_notification('<strong>Warning</strong>: ' + vm.data_customers[index_customer].user_user
-                     + ' tiene reservaciones sin concluir. No se puede eliminado', 'alert-warning', 'customers');
-                     return;
-                  }
-               }
-               create_notification('<strong>Error</strong>: No se pudo eliminar al usuario ' +
-                  vm.data_customers[index_customer].user_user, 'alert-danger', 'customers');
-            }
-         );
-      },
-      fill_customer: function() {
-         this.is_modal_create = true;
-         this.restart_modal();
-         $('#box-modify-customer').modal({
-            backdrop: 'static',
-            keyboard: false
-         });
-      },
-      create_customer: function() {
-         $.post('../ajax/admin/createUser.php', {
-               data_user: JSON.stringify(this.modal_customer)
-            },
-            function(data, status) {
-               if (status == 'success') {
-                  let parse_data = JSON.parse(data);
-                  if (parse_data.status) {
-                     vm.modal_customer.id_user = parse_data.id_user;
-                     vm.data_customers.unshift(JSON.parse(JSON.stringify(vm.modal_customer)));
-                     $('#box-modify-customer').modal("hide");
-                     create_notification('<strong>Exitoso</strong>: Se registro el usuario '
-                        + vm.modal_customer.user_user, 'alert-success', 'customers');
-                     return;
-                  } else if (parse_data.type == 'user_already_exists') {
-                     vm.user_already_exists.state = true;
-                     vm.user_already_exists.value = vm.modal_customer.user_user;
-                     vm.state_inputs_modal.user_user = false;
-                     create_error_user_modal();
-                     return;
-                  }
-               }
-               $('#box-modify-customer').modal("hide");
-               create_notification('<strong>Error</strong>: No se pudo registrar el usuario; conexión fallida',
-                  'alert-danger', 'customers');
-            }
-         );
-      },
-      update_salon: function() {
-         $.post('../ajax/admin/createOrUpdateRoom.php', {
-               "data-salon": JSON.stringify(vm.data_salon)
-            },
-            function(data, status) {
-               if (status == 'success') {
-                  let parse_data = JSON.parse(data);
-                  if (parse_data['status']) {
-                     let status_msg = 'actualizó correctamente la información del salón de eventos';
-                     if (parse_data['action'] == 'create') {
-                        vm.data_salon.t_room.id_saloon = parse_data.t_room;
-                        vm.data_salon.t_room.id_info = parse_data.t_info;
-                        vm.data_salon.t_direction.id_direction = parse_data.t_direction;
-                        vm.data_salon.t_schedule.id_schedule = parse_data.t_schedule;
-                        status_msg = 'registro correctamente el salón de eventos';
-                     }
-                     create_notification('<strong>Exitoso</strong> Se ' + status_msg, 'alert-success', 'salon');
-                     return;
-                  } else {
-                     let status_msg = 'actualizar correctamente la información del salón de eventos\nError al actualizar datos en la tabla ' +
-                        parse_data['in_table'];
-                     if (parse_data['action'] == 'create')
-                        status_msg = 'registrar correctamente el salón de eventos\nError al registrar datos en la tabla' +
-                        parse_data['in_table'];
-                     create_notification('<strong>Error</strong>: No se pudo ' + status_msg, 'alert-danger', 'salon');
-                     return;
-                  }
-               }
-               create_notification('<strong>Error</strong>: Conexión fallida');
-            }
-         );
-      },
-      is_valid_user: function() {
+      /* ----------- Métodos de validación ----------- */
+      is_valid_user() {
          if(this.modal_customer.user_user) {
             if(this.user_already_exists.state) {
                if(this.user_already_exists.value == this.modal_customer.user_user) {
                   this.state_inputs_modal.user_user = false;
-                  create_error_user_modal();
+                  this.create_error_user_modal();
                   return;
                }
                $('#bxm-error-user').remove();
@@ -222,7 +69,8 @@ var vm = new Vue({
             this.state_inputs_modal.user_user = false;
          }
       },
-      is_valid_email: function() {
+
+      is_valid_email() {
          if (/^\w+(\.|-|\w)*@\w+(\.|-|\w)*$/.test(this.modal_customer.email_user)) {
             if (this.is_modal_create) {
                $('#bxm-email').removeClass('error-input').addClass('success-input');
@@ -234,62 +82,346 @@ var vm = new Vue({
                } else {
                   $('#bxm-email').removeClass('success-input').removeClass('error-input');
                }
-               if (this.is_valid_for_update(this.modal_customer, this.data_admin)) {
-                  this.is_disable_btn_modal = false;
-               } else {
-                  this.is_disable_btn_modal = true;
-               }
+               this.is_disable_btn_modal = !this.is_valid_for_update(this.modal_customer, this.data_admin);
             } else {
-               if (this.data_customers[this.index_modal_customer].email_user !=
-                  this.modal_customer.email_user) {
-                     $('#bxm-email').removeClass('success-input').addClass('error-input');
+               if (this.data_customers[this.index_modal_customer].email_user != this.modal_customer.email_user) {
+                  $('#bxm-email').removeClass('success-input').addClass('error-input');
                } else {
                   $('#bxm-email').removeClass('success-input').removeClass('error-input');
                }
-               if (this.is_valid_for_update(this.modal_customer,
-                  this.data_customers[this.index_modal_customer])) {
-                     this.is_disable_btn_modal = false;
-               } else {
-                  this.is_disable_btn_modal = true;
-               }
+               this.is_disable_btn_modal = !this.is_valid_for_update(this.modal_customer, this.data_customers[this.index_modal_customer]);
             }
          } else {
             this.state_inputs_modal.email_user = false;
-            if (this.is_modal_create) {
-               if (this.is_active_success_email) {
-                  $('#bxm-email').removeClass('success-input').addClass('error-input');
-                  this.is_active_success_email = false;
-               }
-               return;
+            if(this.is_modal_create && this.is_active_success_email) {
+               $('#bxm-email').removeClass('success-input').addClass('error-input');
+               this.is_active_success_email = false;
+            } else {
+               $('#bxm-email').removeClass('success-input').addClass('error-input');
             }
-            $('#bxm-email').removeClass('success-input').addClass('error-input');
          }
       },
-      onch_is_valid_email: function() {
+
+      onch_is_valid_email() {
          if (!/^\w+(\.|-|\w)*@\w+(\.|-|\w)*$/.test(this.modal_customer.email_user)) {
             $('#bxm-email').addClass('error-input');
          }
       },
-      is_valid_input: function(key) {
+
+      is_valid_input(key) {
          if(this.modal_customer[key]) {
             if(this.is_modal_create) {
                this.state_inputs_modal[key] = true;
-               return;
             } else if(this.is_modal_update_admin) {
-               if(this.is_valid_for_update(this.modal_customer, this.data_admin)) {
-                  this.is_disable_btn_modal = false;
-                  return;
-               }
-            } else if(this.is_valid_for_update(this.modal_customer,
-               this.data_customers[this.index_modal_customer])) {
-                  this.is_disable_btn_modal = false;
-                  return;
+               this.is_disable_btn_modal = !this.is_valid_for_update(this.modal_customer, this.data_admin);
+            } else {
+               this.is_disable_btn_modal = !this.is_valid_for_update(this.modal_customer, this.data_customers[this.index_modal_customer]);
             }
-            this.is_disable_btn_modal = true;
+         } else {
+            this.state_inputs_modal[key] = false;
          }
-         this.state_inputs_modal[key] = false;
       },
-      restart_modal: function() {
+
+      /* ----------- Métodos de reservas ----------- */
+      get_reservations() {
+         this.data_reservations = {confirmed: [], unconfirmed: []};
+         let type_select = this.type_select_reservations === 'all' ? 'all' : this.type_select_reservations;
+         $.post('../ajax/admin/selectReservations.php', { select_reservations: type_select }, (data, status) => {
+            if(status == 'success') {
+               const data_parse = JSON.parse(data);
+               if(data_parse.type == 'all') {
+                  this.data_reservations.confirmed = data_parse.confirmed;
+                  this.data_reservations.unconfirmed = data_parse.unconfirmed;
+                  if(!data_parse.confirmed.length && !data_parse.unconfirmed.length) {
+                     this.create_notification('<strong>Vació</strong>: No hay reservaciones', 'alert-success', 'reservations');
+                  }
+               } else if(data_parse.type == 'confirmed') {
+                  if(data_parse.confirmed.length)
+                     this.data_reservations.confirmed = data_parse.confirmed;
+                  else
+                     this.create_notification('<strong>Vació</strong>: No hay reservaciones confirmadas', 'alert-success', 'reservations');
+               } else {
+                  if(data_parse.unconfirmed.length)
+                     this.data_reservations.unconfirmed = data_parse.unconfirmed;
+                  else
+                     this.create_notification('<strong>Vació</strong>: No hay reservaciones por confirmar', 'alert-success', 'reservations');
+               }
+            } else {
+               this.create_notification('<strong>Error</strong>: No se pudieron obtener los datos. Conexión fallida', 'alert-danger', 'reservations');
+            }
+         });
+      },
+
+      confirm_reservation(index_reserv) {
+         const reservation = this.data_reservations.unconfirmed[index_reserv];
+         $.post('../ajax/admin/confirmReservation.php', { 'id_reservation': reservation.id_reservation }, (data, status) => {
+            if(status == 'success') {
+               if(this.type_select_reservations == 'all') {
+                  this.data_reservations.confirmed.unshift(this.data_reservations.unconfirmed.splice(index_reserv, 1)[0]);
+               } else {
+                  this.data_reservations.unconfirmed.splice(index_reserv, 1);
+               }
+               this.total_reservations.unconfirmed--;
+               this.total_reservations.confirmed++;
+               this.create_notification('<strong>Exitoso</strong>: Reservación confirmada', 'alert-success', 'reservations');
+            } else {
+               this.create_notification('<strong>Error</strong>: No se pudo confirmar la reservación. Conexión fallida', 'alert-danger', 'reservations');
+            }
+         });
+      },
+
+      /* ----------- Método de actualización del salón ----------- */
+      update_salon() {
+         $.post('../ajax/admin/createOrUpdateRoom.php', { "data-salon": JSON.stringify(this.data_salon) }, (data, status) => {
+            if(status == 'success') {
+               const parse_data = JSON.parse(data);
+               if(parse_data.status) {
+                  let status_msg = 'actualizó correctamente la información del salón de eventos';
+                  if(parse_data.action == 'create') {
+                     this.data_salon.t_room.id_saloon = parse_data.t_room;
+                     this.data_salon.t_room.id_info = parse_data.t_info;
+                     this.data_salon.t_direction.id_direction = parse_data.t_direction;
+                     this.data_salon.t_schedule.id_schedule = parse_data.t_schedule;
+                     status_msg = 'registro correctamente el salón de eventos';
+                  }
+                  this.create_notification('<strong>Exitoso</strong> Se ' + status_msg, 'alert-success', 'salon');
+               } else {
+                  let status_msg = 'actualizar correctamente la información del salón de eventos\nError al actualizar datos en la tabla ' + parse_data.in_table;
+                  if(parse_data.action == 'create') status_msg = 'registrar correctamente el salón de eventos\nError al registrar datos en la tabla ' + parse_data.in_table;
+                  this.create_notification('<strong>Error</strong>: No se pudo ' + status_msg, 'alert-danger', 'salon');
+               }
+            } else {
+               this.create_notification('<strong>Error</strong>: Conexión fallida', 'alert-danger', 'salon');
+            }
+         });
+      },
+      /* ------------------------------------ */
+      /* Métodos de usuarios y administración */
+      /* ------------------------------------ */
+      modify_admin() {
+         this.is_modal_create = false;
+         this.is_modal_update_admin = true;
+         this.restart_modal();
+         $('#box-modify-customer').modal({
+            backdrop: 'static',
+            keyboard: false
+         });
+      },
+
+      update_admin() {
+         $.post('../ajax/admin/updateUser.php', {
+               data_user: JSON.stringify(this.modal_customer)
+            },
+            (data, status) => {
+               if (status == 'success') {
+                  if (JSON.parse(data).status) {
+                     this.data_admin = JSON.parse(JSON.stringify(this.modal_customer));
+                     this.create_notification('<strong>Exitoso</strong>: Se actualizo correctamente tu información',
+                        'alert-success', 'personal-information');
+                     return;
+                  }
+               }
+               this.create_notification('<strong>Error</strong>: No se pudo actualizar tu información',
+                  'alert-danger', 'personal-information');
+            }
+         );
+         $('#box-modify-customer').modal("hide");
+      },
+
+      modify_customer(index_customer) {
+         this.is_modal_create = false;
+         this.index_modal_customer = index_customer;
+         this.is_modal_update_admin = false;
+         this.restart_modal();
+         $('#box-modify-customer').modal({
+            backdrop: 'static',
+            keyboard: false
+         });
+      },
+
+      create_or_update_customer() {
+         if (this.is_disable_btn_modal) return;
+         if (this.is_modal_create) {
+            this.create_customer();
+         } else if (this.is_modal_update_admin) {
+            this.update_admin();
+         } else {
+            this.update_customer();
+         }
+      },
+
+      update_customer() {
+         $.post('../ajax/admin/updateUser.php', {
+               'data_user': JSON.stringify(this.modal_customer)
+            },
+            (data, status) => {
+               if (status == 'success') {
+                  if (JSON.parse(data).status) {
+                     this.data_customers.splice(
+                        this.index_modal_customer,
+                        1,
+                        JSON.parse(JSON.stringify(this.modal_customer))
+                     );
+                     this.create_notification('<strong>Exitoso</strong>: Se actualizo correctamente la información de ' +
+                        this.modal_customer.user_user, 'alert-success', 'customers');
+                     return;
+                  }
+               }
+               this.create_notification('<strong>Error</strong>: No se pudo actualizar la información de ' +
+                  this.modal_customer.user_user, 'alert-danger', 'customers');
+            }
+         );
+         $('#box-modify-customer').modal("hide");
+      },
+
+      remove_customer(index_customer) {
+         $.post('../ajax/admin/deleteUser.php', {
+               id_user: this.data_customers[index_customer].id_user
+            },
+            (data, status) => {
+               if (status == 'success') {
+                  let data_parse = JSON.parse(data);
+                  if (data_parse.status) {
+                     this.create_notification('<strong>Exitoso</strong>: Se elimino correctamente al usuario ' +
+                        this.data_customers[index_customer].user_user, 'alert-success', 'customers');
+                     this.data_customers.splice(index_customer, 1);
+                     return;
+                  } else if (data_parse.type == 'exists_reservations') {
+                     this.create_notification('<strong>Warning</strong>: ' +
+                        this.data_customers[index_customer].user_user +
+                        ' tiene reservaciones sin concluir. No se puede eliminar',
+                        'alert-warning', 'customers');
+                     return;
+                  }
+               }
+               this.create_notification('<strong>Error</strong>: No se pudo eliminar al usuario ' +
+                  this.data_customers[index_customer].user_user, 'alert-danger', 'customers');
+            }
+         );
+      },
+
+      fill_customer() {
+         this.is_modal_create = true;
+         this.restart_modal();
+         $('#box-modify-customer').modal({
+            backdrop: 'static',
+            keyboard: false
+         });
+      },
+
+      create_customer() {
+         $.post('../ajax/admin/createUser.php', {
+               data_user: JSON.stringify(this.modal_customer)
+            },
+            (data, status) => {
+               if (status == 'success') {
+                  let parse_data = JSON.parse(data);
+                  if (parse_data.status) {
+                     this.modal_customer.id_user = parse_data.id_user;
+                     this.data_customers.unshift(JSON.parse(JSON.stringify(this.modal_customer)));
+                     $('#box-modify-customer').modal("hide");
+                     this.create_notification('<strong>Exitoso</strong>: Se registro el usuario ' +
+                        this.modal_customer.user_user, 'alert-success', 'customers');
+                     return;
+                  } else if (parse_data.type == 'user_already_exists') {
+                     this.user_already_exists.state = true;
+                     this.user_already_exists.value = this.modal_customer.user_user;
+                     this.state_inputs_modal.user_user = false;
+                     this.create_error_user_modal();
+                     return;
+                  }
+               }
+               $('#box-modify-customer').modal("hide");
+               this.create_notification('<strong>Error</strong>: No se pudo registrar el usuario; conexión fallida',
+                  'alert-danger', 'customers');
+            }
+         );
+      },
+
+      /* ------------------------------------ */
+      /* Métodos de servicios */
+      /* ------------------------------------ */
+      fill_service() {
+         this.is_modal_service_create = true;
+         this.restart_modal_service();
+         $('#box-services').modal({
+            backdrop: 'static',
+            keyboard: false
+         });
+      },
+
+      create_or_update_service() {
+         if (this.is_modal_service_create)
+            this.create_service();
+         else
+            this.update_service();
+      },
+
+      create_service() {
+         $.post('../ajax/admin/createService.php',
+            { 'data_service': JSON.stringify(this.modal_service) },
+            (data, status) => {
+               if (status == 'success') {
+                  let data_parse = JSON.parse(data);
+                  if (data_parse.status) {
+                     this.modal_service.id_service = data_parse.id_service;
+                     this.data_services.unshift(JSON.parse(JSON.stringify(this.modal_service)));
+                     this.create_notification('<strong>Exitoso</strong>: Se registro correctamente el servicio',
+                        'alert-success', 'services');
+                     return;
+                  }
+               }
+               this.create_notification('<strong>Error</strong>: No se pudo registrar el servicio',
+                  'alert-danger', 'services');
+            }
+         );
+         $('#box-services').modal("hide");
+      },
+
+      modify_service(index_service) {
+         this.index_service = index_service;
+         this.is_modal_service_create = false;
+         this.restart_modal_service();
+         $('#box-services').modal({
+            backdrop: 'static',
+            keyboard: false
+         });
+      },
+
+      update_service() {
+         $.post('../ajax/admin/updateService.php',
+            { 'data_service': JSON.stringify(this.modal_service) },
+            (data, status) => {
+               if (status == 'success') {
+                  if (JSON.parse(data).status) {
+                     this.data_services.splice(
+                        this.index_service,
+                        1,
+                        JSON.parse(JSON.stringify(this.modal_service))
+                     );
+                     this.create_notification('<strong>Exitoso</strong>: Se ha actualizdo la información del servicio',
+                        'alert-success', 'services');
+                     return;
+                  }
+               }
+               this.create_notification('<strong>Error</strong>: No se pudo actualizar la información del servicio',
+                  'alert-danger', 'services');
+            }
+         );
+         $('#box-services').modal("hide");
+      },
+
+      restart_modal_service() {
+         if (this.is_modal_service_create)
+            this.modal_service = { id_service: 1, name_service: '', price: 0, detail: '' };
+         else
+            this.modal_service = JSON.parse(JSON.stringify(this.data_services[this.index_service]));
+      },
+
+      /* ------------------------------------ */
+      /* Métodos de validación y utilidades */
+      /* ------------------------------------ */
+      restart_modal() {
          if (this.is_modal_create) {
             this.modal_customer = {
                id_user: 1,
@@ -310,157 +442,88 @@ var vm = new Vue({
          this.is_disable_btn_modal = true;
          this.is_active_success_email = false;
       },
-      is_valid_for_update: function(data_copy, data_origin) {
+
+      is_valid_for_update(data_copy, data_origin) {
          let everyone_has_data = true;
          let there_is_modification = false;
          for (const key in data_copy) {
-            if(!data_copy[key]) {
+            if (!data_copy[key]) {
                everyone_has_data = false;
                break;
             }
          }
-         if(everyone_has_data) {
+         if (everyone_has_data) {
             for (const key in data_copy) {
-               if(data_copy[key] != data_origin[key]) {
+               if (data_copy[key] != data_origin[key]) {
                   there_is_modification = true;
                }
             }
          }
          return everyone_has_data && there_is_modification;
       },
-      get_reservations: function() {
-         this.data_reservations = {confirmed: [], unconfirmed: []}
-         let type_select = 'unconfirmed';
-         if(this.type_select_reservations == 'all') {
-            type_select = 'all';
-         } else if(this.type_select_reservations == 'confirmed') {
-            type_select = 'confirmed';
+
+      /* ------------------------------------ */
+      /* Métodos de manejo de páginas (antes globales) */
+      /* ------------------------------------ */
+      loadPage(id_page) {
+         if (this.activeOption(id_page)) {
+            this.showPage(id_page);
          }
-         $.post('../ajax/admin/selectReservations.php',
-            {select_reservations: type_select},
-            function(data, status) {
-               if(status == 'success') {
-                  let data_parse = JSON.parse(data);
-                  if(data_parse.type == 'all') {
-                     vm.data_reservations.confirmed = data_parse.confirmed;
-                     vm.data_reservations.unconfirmed = data_parse.unconfirmed;
-                     if(!data_parse.confirmed.length && !data_parse.unconfirmed.length) {
-                        create_notification('<strong>Vació</strong>: No hay reservaciones',
-                        'alert-success', 'reservations');
-                     }
-                  } else if(data_parse.type == 'confirmed'){
-                     if(data_parse.confirmed.length)
-                        vm.data_reservations.confirmed = data_parse.confirmed;
-                     else
-                        create_notification('<strong>Vació</strong>: No hay reservaciones confirmadas',
-                        'alert-success', 'reservations');
-                  } else {
-                     if(data_parse.unconfirmed.length)
-                        vm.data_reservations.unconfirmed = data_parse.unconfirmed;
-                     else
-                        create_notification('<strong>Vació</strong>: No hay reservaciones por confirmar',
-                        'alert-success', 'reservations');
-                  }
-               } else {
-                  create_notification('<strong>Error</strong>: No se pudieron obtener los datos. Conexión fallida',
-                     'alert-danger', 'reservations');
-               }
-            }
-         );
       },
-      confirm_reservation: function(index_reserv) {
-         $.post('../ajax/admin/confirmReservation.php',
-            {'id_reservation': this.data_reservations.unconfirmed[index_reserv].id_reservation},
-            function(data, status) {
-               if(status == 'success') {
-                  if(vm.type_select_reservations == 'all') {
-                     vm.data_reservations.confirmed.unshift(
-                        vm.data_reservations.unconfirmed.splice(index_reserv, 1)[0]);
-                  } else {
-                     vm.data_reservations.unconfirmed.splice(index_reserv, 1);
-                  }
-                  vm.total_reservations.unconfirmed--;
-                  vm.total_reservations.confirmed++;
-                  create_notification('<strong>Exitoso</strong>: Reservación confirmada',
-                     'alert-success', 'reservations');
-               } else {
-                  create_notification('<strong>Error</strong>: No se pudo confirmar la reservación. Conexión fallida',
-                     'alert-danger', 'reservations');
-               }
-            }
-         );
+
+      activeOption(id_page) {
+         const optionId = '#opt-' + id_page;
+         if ($(optionId).hasClass('option-selected')) return false;
+
+         if (this.id_option_current) {
+            $(this.id_option_current).removeClass('option-selected');
+         }
+
+         this.id_option_current = optionId;
+         $(this.id_option_current).addClass('option-selected');
+
+         return true;
       },
-      fill_service: function() {
-         this.is_modal_service_create = true;
-         this.restart_modal_service();
-         $('#box-services').modal({
-            backdrop: 'static',
-            keyboard: false
-         });
+
+      showPage(id_page) {
+         if (this.id_page_current) {
+            $(this.id_page_current).css('display', 'none');
+         }
+         this.id_page_current = '#' + id_page;
+         $(this.id_page_current).css('display', 'block');
       },
-      create_or_update_service: function() {
-         if(this.is_modal_service_create)
-            this.create_service();
+
+      /* ------------------------------------ */
+      /* Funciones de notificaciones */
+      /* ------------------------------------ */
+      create_notification(message, type_notification, section) {
+         let alert = '#' + section + '>div.alert:first-child';
+         $('#' + section + '> div:last-child').before('<div class="alert ' + type_notification +
+            ' alert-dismissible fade show text-center" role="alert">' + message +
+            '<button type="button" class="close" data-dismiss="alert" aria-label="close">' +
+            '<span aria-hidden="true">&times;</span></button>');
+         setTimeout(() => {
+            if (document.querySelector(alert))
+               $(alert).alert('close');
+         }, 6000);
+      },
+
+      create_error_user_modal() {
+         $('#box-modify-customer div.modal-body > div:first-child').after(
+            '<p id="bxm-error-user" class="text-danger">Este usuario ya existe, especifique otro usuario</p>');
+      },
+
+      show_or_hide_password(id_button, id_input) {
+         $(id_button).toggleClass('fa-eye-slash fa-eye');
+         if ($(id_input).attr('type') == 'password')
+            $(id_input).attr('type', 'text');
          else
-            this.update_service();
-      },
-      create_service: function() {
-         $.post('../ajax/admin/createService.php',
-            {'data_service': JSON.stringify(this.modal_service)},
-            function(data, status) {
-               if(status == 'success') {
-                  let data_parse = JSON.parse(data);
-                  if(data_parse.status) {
-                     vm.modal_service.id_service = data_parse.id_service;
-                     vm.data_services.unshift(JSON.parse(JSON.stringify(vm.modal_service)));
-                     create_notification('<strong>Exitoso</strong>: Se registro correctamente el servicio',
-                        'alert-success', 'services');
-                     return;
-                  }
-               }
-               create_notification('<strong>Error</strong>: No se pudo registrar el servicio',
-                  'alert-danger', 'services');
-            }
-         );
-         $('#box-services').modal("hide");
-      },
-      modify_service: function(index_service) {
-         this.index_service = index_service;
-         this.is_modal_service_create = false;
-         this.restart_modal_service();
-         $('#box-services').modal({
-            backdrop: 'static',
-            keyboard: false
-         });
-      },
-      update_service: function() {
-         $.post('../ajax/admin/updateService.php',
-            {'data_service': JSON.stringify(this.modal_service)},
-            function(data, status) {
-               if(status == 'success') {
-                  if(JSON.parse(data).status) {
-                     Vue.set(vm.data_services, vm.index_service,
-                        JSON.parse(JSON.stringify(vm.modal_service)));
-                     create_notification('<strong>Exitoso</strong>: Se ha actualizdo la información del servicio',
-                        'alert-success', 'services');
-                     return;
-                  }
-               }
-               create_notification('<strong>Error</strong>: No se pudo actualizar la información del servicio',
-                  'alert-danger', 'services');
-            }
-         );
-         $('#box-services').modal("hide");
-      },
-      restart_modal_service: function() {
-         if(this.is_modal_service_create)
-            this.modal_service = {id_service: 1, name_service: '', price: 0, detail: ''}
-         else
-            this.modal_service = JSON.parse(JSON.stringify(this.data_services[this.index_service]));
+            $(id_input).attr('type', 'password');
       }
    },
+
    computed: {
-      modal_data: function() {
+      modal_data() {
          if (this.is_modal_create) {
             return {
                title: "Agregue los datos para el ",
@@ -480,20 +543,22 @@ var vm = new Vue({
             }
          }
       },
+
       is_disable_btn_modal: {
-         get: function() {
+         get() {
             for (const key in this.state_inputs_modal) {
                if (!this.state_inputs_modal[key]) return true;
             }
             return false;
          },
-         set: function(new_state) {
+         set(new_state) {
             for (const key in this.state_inputs_modal) {
                this.state_inputs_modal[key] = !new_state;
             }
          }
       },
-      modal_data_service: function() {
+
+      modal_data_service() {
          if (this.is_modal_service_create) {
             return {
                title: "Agregue los datos para el ",
@@ -507,117 +572,60 @@ var vm = new Vue({
             text_btn: "Actualizar",
          }
       }
-   },
-});
+   }
 
-var id_page_current = '#customers';
-var id_option_current = '#opt-customers';
+}).mount('#app');
 
+/* ------------------------------------ */
+/* Código jQuery que sigue igual         */
+/* ------------------------------------ */
 $(document).ready(function() {
    $('.list-group span').on('click', function() {
       $('.navbar-toggler').click();
    });
 
-   $(id_page_current).css('display', 'block');
-   $(id_option_current).addClass('option-selected');
-
    let c_date = new Date();
    $('#customers > div > h4').text(c_date.getDate() + '/' + (c_date.getMonth() + 1) +
       '/' + c_date.getFullYear());
+
    $('#search-customers').on('input', function() {
-      //if ($(this).val()) {
-         $.post('../ajax/admin/selectUserForUser.php', {
-               user: $(this).val()
-            },
-            function(data, status) {
-               if (status == 'success') {
-                  let parse_data = JSON.parse(data);
-                  if (parse_data.value) {
-                     vm.data_customers = parse_data.data_customers;
-                  } else {
-                     vm.data_customers = [];
-                  }
+      $.post('../ajax/admin/selectUserForUser.php', {
+            user: $(this).val()
+         },
+         function(data, status) {
+            if (status == 'success') {
+               let parse_data = JSON.parse(data);
+               if (parse_data.value) {
+                  vm.data_customers = parse_data.data_customers;
+               } else {
+                  vm.data_customers = [];
                }
             }
-         );
-      //}
+         }
+      );
    });
+
    $('#box-modify-customer').on('hidden.bs.modal', function() {
       if (document.getElementById('bxm-error-user')) {
          $('#bxm-error-user').remove();
       }
       $('#bxm-email').removeClass('error-input').removeClass('success-input');
    });
+
    $('#search-services').on('input', function() {
-      //if ($(this).val()) {
-         $.post('../ajax/admin/selectServiceForName.php', {
-               'name_service': $(this).val()
-            },
-            function(data, status) {
-               if (status == 'success') {
-                  let parse_data = JSON.parse(data);
-                  if (parse_data.value) {
-                     vm.data_services = parse_data.data_services;
-                  } else {
-                     vm.data_services = [];
-                  }
+      $.post('../ajax/admin/selectServiceForName.php', {
+            'name_service': $(this).val()
+         },
+         function(data, status) {
+            if (status == 'success') {
+               let parse_data = JSON.parse(data);
+               if (parse_data.value) {
+                  vm.data_services = parse_data.data_services;
+               } else {
+                  vm.data_services = [];
                }
             }
-         );
-      //}
+         }
+      );
    });
 });
-
-function load_page(id_page) {
-   if (active_option(id_page)) {
-      show_page(id_page);
-   }
-}
-
-function active_option(id_page) {
-   if ($('#opt-' + id_page).attr('class').lastIndexOf('option-selected') != -1) return false;
-
-   if (id_option_current) {
-      $(id_option_current).removeClass('option-selected');
-   }
-
-   id_option_current = '#opt-' + id_page;
-   $(id_option_current).addClass('option-selected');
-
-   return true;
-}
-
-function show_page(id_page) {
-   if (id_page_current) {
-      $(id_page_current).css('display', 'none');
-   }
-
-   id_page_current = '#' + id_page;
-   $(id_page_current).css('display', 'block');
-}
-
-function create_notification(message, type_notification, section) {
-   let alert = '#'+section+'>div.alert:first-child';
-   $('#'+ section + '> div:last-child').before('<div class="alert ' + type_notification +
-      ' alert-dismissible fade show text-center" role="alert">' + message +
-      '<button type="button" class="close" data-dismiss="alert" aria-label="close">' +
-      '<span aria-hidden="true">&times;</span></button>');
-   setTimeout(function() {
-      if(document.querySelector(alert))
-         $(alert).alert('close');
-   }, 6000);
-}
-
-function create_error_user_modal() {
-   $('#box-modify-customer div.modal-body > div:first-child').after(
-      '<p id="bxm-error-user" class="text-danger">Este usuario ya existe, especifique otro usuario</p>');
-}
-
-function show_or_hide_password(id_button, id_input) {
-   $(id_button).toggleClass('fa-eye-slash fa-eye');
-
-   if ($(id_input).attr('type') == 'password')
-      $(id_input).attr('type', 'text');
-   else
-      $(id_input).attr('type', 'password');
-}

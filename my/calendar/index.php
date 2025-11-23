@@ -75,7 +75,7 @@ if (isset($_SESSION['modifyReservation'])) {
           <article id="date" class="w-100 text-center pt-2 col-lg-12 pb-4">
             <h5 class="mb-2 font-weight-bold">Seleccione la fecha</h5>
             <div id="month" class="d-flex justify-content-between align-items-center mb-3 pb-3">
-              <button type="button" class="btn btn-dark" v-on:click="previuos_month">&LeftAngleBracket;</button>
+              <button type="button" class="btn btn-dark" v-on:click="previous_month">&LeftAngleBracket;</button>
               <h6 class="mb-0">{{months[month]}} {{year}}</h6>
               <button type="button" class="btn btn-dark" v-on:click="next_month">&RightAngleBracket;</button>
             </div>

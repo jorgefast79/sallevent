@@ -15,7 +15,7 @@ if (!isset($_SESSION['data_admin'])) {
    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous" />
    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous" />
-   <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+   <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
    <link rel="shortcut icon" type="image/png" href="/img/favicon/favicon.png"/>
    <title>Admin</title>
    <link rel="stylesheet" href="../css/admin/style.css">
@@ -27,13 +27,13 @@ if (!isset($_SESSION['data_admin'])) {
    ?>
    <main id="app" class="container-fluid mt-2 px-0">
       <div id="nav-left" class="w-100 collapse text-center p-0 list-group list-group-flush bg-dark sticky-top">
-         <h5 class="list-group-item bg-dark text-white font-weight-bold mb-2" style="border-bottom-color: white;">¡Hola {{data_admin.name_user}}!</h5>
-         <span id="opt-customers" class="btn btn-dark btn-block" onclick="load_page('customers')">Clientes</span>
-         <span id="opt-reservations" class="btn btn-dark btn-block" onclick="load_page('reservations')">Reservaciones</span>
-         <span id="opt-services" class="btn btn-dark btn-block" onclick="load_page('services')">Servicios</span>
-         <span id="opt-salon" class="btn btn-dark btn-block" onclick="load_page('salon')">Salón</span>
+         <h5 class="list-group-item bg-dark text-white font-weight-bold mb-2" style="border-bottom-color: white;">¡Hola <?php echo $_SESSION['data_admin']['name_user']; ?>!</h5>
+         <span id="opt-customers" class="btn btn-dark btn-block"  @click="loadPage('customers')">Clientes</span>
+         <span id="opt-reservations" class="btn btn-dark btn-block" @click="loadPage('reservations')">Reservaciones</span>
+         <span id="opt-services" class="btn btn-dark btn-block" @click="loadPage('services')">Servicios</span>
+         <span id="opt-salon" class="btn btn-dark btn-block" @click="loadPage('salon')">Salón</span>
          <div class="list-group-item bg-dark text-white mt-2 px-0" style="border: none; border-top: 1px solid white;">
-            <span id="opt-personal-information" class="btn btn-dark btn-block" onclick="load_page('personal-information')">Datos personales</span>
+            <span id="opt-personal-information" class="btn btn-dark btn-block" @click="loadPage('personal-information')">Datos personales</span>
          </div>
       </div>
       <section id="customers" class="px-0 mt-3 col-lg-9 mt-lg-0" style="display: none;">
@@ -342,7 +342,7 @@ if (!isset($_SESSION['data_admin'])) {
                   <div class="input-group">
                      <input v-bind:value="data_admin.password_user" id="inf-pass" type="password" readonly class="form-control" />
                      <div class="input-group-append">
-                        <span class="btn btn-success" onclick="show_or_hide_password('#inf-show-pass', '#inf-pass')">
+                        <span class="btn btn-success" @click="show_or_hide_password('#inf-show-pass', '#inf-pass')">
                            <i class="fas fa-eye" id="inf-show-pass"></i>
                         </span>
                      </div>
@@ -396,7 +396,7 @@ if (!isset($_SESSION['data_admin'])) {
                      </div>
                      <input v-model="modal_customer.password_user" v-on:input="is_valid_input('password_user')" type="password" id="bxm-pass" class="form-control" placeholder="Contraseña" maxlength="45">
                      <div class="input-group-append">
-                        <span class="btn btn-success" onclick="show_or_hide_password('#bxm-show-pass', '#bxm-pass')">
+                        <span class="btn btn-success" @click="show_or_hide_password('#bxm-show-pass', '#bxm-pass')">
                            <i class="fas fa-eye" id="bxm-show-pass"></i>
                         </span>
                      </div>

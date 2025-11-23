@@ -12,7 +12,7 @@ if (isset($_POST['send'])) {
   $password = $_POST['password'];
   $operations = new OperationBD();
   $results = $operations->consultUser($user, $password);
-  if (count($results > 0)) {
+  if (!empty($results)) {
     switch ($results['type_user']) {
       case '0':
         $_SESSION['data_admin'] = array('id_user' => $results['id_user'], 'name_user' => $results['name_user']);

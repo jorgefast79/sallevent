@@ -13,6 +13,24 @@
         /**
          * -----Validation for sql injection.------
          */
+
+        public function login_user($username, $password)
+        {
+            $conn = $this->conn;
+
+            $stmt = $conn->prepare("SELECT * FROM users WHERE username = ? AND password = ?");
+            $stmt->bind_param("ss", $username, $password);
+            $stmt->execute();
+            $result = $stmt->get_result();
+
+            $rows = [];
+            while ($row = $result->fetch_assoc()) {
+                $rows[] = $row;
+            }
+
+            return $rows; // SIEMPRE devolver un array
+        }
+
         public function consultUser($user, $password){
             $result_return = "";
             
