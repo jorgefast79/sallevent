@@ -1,0 +1,9 @@
+services:
+  - type: private_service
+    name: mysql-sallevent
+    env: docker
+    plan: free
+    disk:
+      name: mysqldata
+      mountPath: /var/lib/mysql
+      sizeGB: 1
