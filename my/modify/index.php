@@ -112,7 +112,7 @@ if (isset($_POST['updateReservation'])) {
           }
         }
 
-        echo $newOperations->updateFolioServices(intval($folioServices),$totalServices);        
+        $newOperations->updateFolioServices(intval($folioServices),$totalServices);        
 
         $newOperations->deleteFolioServices(intval($folioServices));
         $services = $newOperations->getServicesWithoutClosingBD();
@@ -130,9 +130,9 @@ if (isset($_POST['updateReservation'])) {
         $dateStart = $startDateYYmmDD." ".$startHour.":00:00";
 
         $dateEnd = $endDateYYmmDD." ".$finalHour.":00:00";
-        echo $idRervation;
+        $idRervation;
 
-        echo $newOperations->updateReservations(
+        $newOperations->updateReservations(
           $typeEventToForm,
           $priceByHour + $totalServices,
           $dateStart,
