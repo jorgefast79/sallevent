@@ -4,7 +4,8 @@
   "description": "_Esta aplicación fue realizada con el proposito de realizar reservaciones de un salón de eventos. Esta permite crear, buscar, modificar/actualizar y eliminar (CRUD) las reservaciones._",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "vue-cli-service build"
   },
   "keywords": [],
   "author": "",
