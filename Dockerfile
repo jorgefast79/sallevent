@@ -1,10 +1,13 @@
-# usa la imagen oficial de MySQL
-FROM mysql:8.0
+FROM php:8.2-apache
 
-# copia un script de inicialización (opcional)
-COPY db/init.sql /docker-entrypoint-initdb.d/init.sql
+# Enable mysqli and PDO
+RUN docker-php-ext-install mysqli pdo pdo_mysql
 
-# Exponer puerto (Render gestionará internamente)
-EXPOSE 3306
+# Enable Apache mod_rewrite
+RUN a2enmod rewrite
 
-# El contenedor usa el entrypoint del image oficial (no hace falta CMD)
+# Copy project
+COPY . /var/www/html/
+
+# Permissions
+RUN chown -R www-data:www-data /var/www/html
