@@ -18,6 +18,9 @@ if (isset($_SESSION['modifyReservation'])) {
 require_once('../../databaseOperations/operations.php');
 $operations = new OperationBD();
 $dataRoom = $operations->getDataRoom();
+if (!$dataRoom) {
+    $dataRoom = ['name_saloon' => 'No disponible', 'description_saloon' => 'No disponible'];
+}
 ?>
 <!DOCTYPE html>
 <html lang="es">
@@ -167,6 +170,9 @@ $dataRoom = $operations->getDataRoom();
                     echo '</td>';
                     echo '</tr>';
                   }
+                }
+                else {
+                    echo '<tr><td colspan="7" class="text-center">No hay reservaciones</td></tr>';
                 }
                 ?>
               </tbody>
