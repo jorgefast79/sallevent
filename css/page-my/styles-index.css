@@ -14,8 +14,8 @@ section {
   top: 90px;
 }
 #date {
-  background-color: #1B1C1C;
-  color: #EEEEEE;
+  background-color: #1b1c1c;
+  color: #eeeeee;
 }
 #month {
   border-bottom: 2px solid #777e7e;
@@ -41,34 +41,34 @@ section {
   height: 50px;
   padding: 0;
   padding-bottom: 10px;
-  background: #EEEEEE;
-  color: #1B1C1C;
-  border-color: #EEEEEE;
+  background: #eeeeee;
+  color: #1b1c1c;
+  border-color: #eeeeee;
 }
 #cal .btn.disabled {
   cursor: not-allowed;
   opacity: 1;
-  background: #EEEEEE;
-  color: #1B1C1C;
-  border-color: #EEEEEE;
+  background: #eeeeee;
+  color: #1b1c1c;
+  border-color: #eeeeee;
 }
 #cal div.btn.selected {
   background-color: purple;
   border-color: purple;
 }
 #cal div.btn.reservated {
-  background-color: #70A3ED;
-  border-color: #70A3ED;
+  background-color: #70a3ed;
+  border-color: #70a3ed;
 }
 #cal div.btn.on-hold {
-  background: #FCC70F;
-  border-color: #FCC70F;
+  background: #fcc70f;
+  border-color: #fcc70f;
 }
 #cal > div.row-cal:first-child {
   justify-content: flex-end;
 }
 #price {
-  background-color: #EEEEEE;
+  background-color: #eeeeee;
 }
 
 @media only screen and (min-width: 992px) {
