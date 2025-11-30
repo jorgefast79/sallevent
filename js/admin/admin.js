@@ -789,7 +789,4 @@ $(document).ready(function () {
       }
     )
   })
-
-  let x = 10
-  console.log('Probando ESLint')
 })
