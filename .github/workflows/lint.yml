@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 name: Lint & Build
 
 on:
@@ -6,22 +7,44 @@ on:
 
 jobs:
   lint:
+=======
+name: Lint
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  eslint-check:
+>>>>>>> 16049a5 (agregando eslint)
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
 
+<<<<<<< HEAD
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: 18
+=======
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+>>>>>>> 16049a5 (agregando eslint)
 
       - name: Install dependencies
         run: npm install
 
+<<<<<<< HEAD
       - name: Fix permissions
         run: chmod +x ./node_modules/.bin/eslint
 
       - name: Run lint
+=======
+      - name: Run ESLint
+>>>>>>> 16049a5 (agregando eslint)
         run: npm run lint
