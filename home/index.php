@@ -43,7 +43,7 @@
       <img src="../img/home/content-carousel/img-2.jpg" 
         class="d-block w-100" alt="..." height="500px">
       <div class="carousel-caption d-none d-md-block">
-        <h5>Agrega nuestro lobby a cualquier evento</h5>
+        <h5>Agrega nuestro lobby a cualquier evento especial que quieras celebrar</h5>
         <p>¡Cree una atmósfera profesional en el instante en que lleguen sus invitados!</p>
       </div>
     </div>
