@@ -58,7 +58,7 @@
       <img src="../img/home/content-carousel/img-4.jpg" 
         class="d-block w-100" alt="..." height="500px">
       <div class="carousel-caption d-none d-md-block">
-        <h5>¡Alquile nuestro hermoso lugar para su ocasión especial!</h5>
+        <h5>¡Alquile nuestro hermoso lugar para su ocasión especial y celebraciones especiales!</h5>
       </div>
     </div>
     <div class="carousel-item">
